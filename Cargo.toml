@@ -1,0 +1,8 @@
+[package]
+name = "wentuz-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+WentuZ-Backend = { git = "https://github.com/NullPointerGang/WantuZ-Backend", branch = "main" }
+tokio = { version = "1", features = ["full"] }
