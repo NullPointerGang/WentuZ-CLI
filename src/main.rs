@@ -16,17 +16,15 @@
  */
 
 
-use std::io::{self, Write};
-use std::sync::Arc;
-use std::time::Duration;
-use tokio::sync::Mutex;
-use std::fs;
+ use std::io::{self, Write};
+ use std::sync::{Arc, Mutex};
+ use std::time::Duration;
+ use std::fs;
  
-use WentuZ_Backend::{Player, Track};
+ use WentuZ_Backend::{Player, Track};
  
  
-#[tokio::main]
-async fn main() {
+ fn main() {
      let player = Arc::new(Mutex::new(Player::new()));
  
      loop {
@@ -51,31 +49,31 @@ async fn main() {
  
          match choice {
              "1" => {
-                 let mut player = player.lock().await;
+                 let mut player = player.lock().unwrap();
                  player.auto_play();
              }
              "2" => {
-                 let player = player.lock().await;
+                 let player = player.lock().unwrap();
                  player.pause();
                  println!("Playback paused.");
              }
              "3" => {
-                 let player = player.lock().await;
+                 let player = player.lock().unwrap();
                  player.resume();
                  println!("Playback resumed.");
              }
              "4" => {
-                 let player = player.lock().await;
+                 let player = player.lock().unwrap();
                  player.stop_auto_play();
                  println!("Playback stopped.");
              }
              "5" => {
-                 let player = player.lock().await;
+                 let player = player.lock().unwrap();
                  player.play_next();
                  println!("Track skipped.");
              }
              "6" => {
-                 let player = player.lock().await;
+                 let player = player.lock().unwrap();
                  player.play_previous();
                  println!("Previous track.");
              }
@@ -85,7 +83,7 @@ async fn main() {
                  let mut volume_input = String::new();
                  io::stdin().read_line(&mut volume_input).unwrap();
                  if let Ok(volume) = volume_input.trim().parse::<f32>() {
-                     let mut player = player.lock().await;
+                     let mut player = player.lock().unwrap();
                      player.set_volume(volume);
                      println!("Volume set to: {}", volume);
                  } else {
@@ -99,7 +97,7 @@ async fn main() {
                  io::stdin().read_line(&mut track_path).unwrap();
                  let track_path = track_path.trim();
                  if let Ok(track) = load_track(track_path) {
-                     let player = player.lock().await;
+                     let player = player.lock().unwrap();
                      player.add_to_queue(track);
                      println!("Added track to queue: {}", track_path);
                  } else {
@@ -112,7 +110,7 @@ async fn main() {
                  let mut seek_input = String::new();
                  io::stdin().read_line(&mut seek_input).unwrap();
                  if let Ok(seek_time) = seek_input.trim().parse::<u64>() {
-                     let player = player.lock().await;
+                     let player = player.lock().unwrap();
                      player.seek(Duration::from_secs(seek_time));
                      println!("Seeked to {} seconds.", seek_time);
                  } else {
@@ -121,11 +119,11 @@ async fn main() {
              }
              "10" => {
                  println!("Current queue:");
-                 let player = player.lock().await;
+                 let player = player.lock().unwrap();
                  let queue = player.get_queue().lock().unwrap().clone();
                  for (index, track) in queue.get_tracks().iter().enumerate() {
                      println!("{}: {}", index + 1, track.get_file_path().as_deref().unwrap_or("Unknown"));
-                 }                         
+                 }
              }
              "0" => {
                  println!("Exiting...");
